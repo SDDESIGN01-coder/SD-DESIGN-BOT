@@ -179,8 +179,9 @@ if (cmd === "!dmall") {
     if (member.user.bot) return;
 
     member.send({
-      embeds: [embed]
-    }).catch(() => {});
+  embeds: [embed],
+  files: [...message.attachments.values()].map(file => file.url)
+}).catch(() => {});
   });
 
   message.reply("ส่ง DM ทุกคนเรียบร้อยแล้ว");
@@ -216,8 +217,9 @@ if (cmd === "!dmid") {
   }
 
   await user.send({
-    embeds: [embed]
-  }).catch(() => {
+  embeds: [embed],
+  files: [...message.attachments.values()].map(file => file.url)
+}).catch(() => {
     message.reply("ไม่สามารถส่ง DM ให้ผู้ใช้นี้ได้");
   });
 
