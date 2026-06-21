@@ -149,49 +149,80 @@ client.on("messageCreate", async (message) => {
   }
 
   // ===================== !dmall =====================
-  if (cmd === "!dmall") {
-    if (!isAdmin) return;
+if (cmd === "!dmall") {
+  if (!isAdmin) return;
 
-    const text = args.slice(1).join(" ");
-    const guild = message.guild;
+  const text = args.slice(1).join(" ");
+  if (!text) return message.reply("ใส่ข้อความก่อน");
 
-    await guild.members.fetch();
+  const guild = message.guild;
 
-    guild.members.cache.forEach(member => {
-      if (member.user.bot) return;
+  await guild.members.fetch();
 
-      member.send({
-        embeds: [
-          new EmbedBuilder()
-            .setColor("Blue")
-            .setDescription(text)
-        ]
-      }).catch(() => {});
-    });
+  // ตรวจสอบว่ามีลิงก์รูปไหม
+  const imageUrl = text.match(/https?:\/\/\S+\.(png|jpg|jpeg|gif|webp)/i);
 
-    message.reply("ส่ง DM ทุกคนแล้ว");
+  const embed = new EmbedBuilder()
+    .setColor("Blue")
+    .setTitle("📢 ประกาศจาก SD DESIGN STUDIO")
+    .setDescription(text)
+    .setFooter({
+      text: "SD DESIGN STUDIO"
+    })
+    .setTimestamp();
+
+  if (imageUrl) {
+    embed.setImage(imageUrl[0]);
   }
+
+  guild.members.cache.forEach(member => {
+    if (member.user.bot) return;
+
+    member.send({
+      embeds: [embed]
+    }).catch(() => {});
+  });
+
+  message.reply("ส่ง DM ทุกคนเรียบร้อยแล้ว");
+}
 
   // ===================== !dmid =====================
-  if (cmd === "!dmid") {
-    if (!isAdmin) return;
+if (cmd === "!dmid") {
+  if (!isAdmin) return;
 
-    const userId = args[1];
-    const text = args.slice(2).join(" ");
+  const userId = args[1];
+  const text = args.slice(2).join(" ");
 
-    const user = await client.users.fetch(userId).catch(() => null);
-    if (!user) return message.reply("ไม่เจอ user");
+  if (!userId || !text)
+    return message.reply("!dmid <ไอดีลูกค้า> <ข้อความ>");
 
-    user.send({
-      embeds: [
-        new EmbedBuilder()
-          .setColor("Purple")
-          .setDescription(text)
-      ]
-    });
+  const user = await client.users.fetch(userId).catch(() => null);
 
-    message.reply("ส่ง DM แล้ว");
+  if (!user) return message.reply("ไม่พบผู้ใช้");
+
+  const imageUrl = text.match(/https?:\/\/\S+\.(png|jpg|jpeg|gif|webp)/i);
+
+  const embed = new EmbedBuilder()
+    .setColor("Purple")
+    .setTitle("📢 ประกาศจาก SD DESIGN STUDIO")
+    .setDescription(text)
+    .setFooter({
+      text: "SD DESIGN STUDIO"
+    })
+    .setTimestamp();
+
+  if (imageUrl) {
+    embed.setImage(imageUrl[0]);
   }
+
+  await user.send({
+    embeds: [embed]
+  }).catch(() => {
+    message.reply("ไม่สามารถส่ง DM ให้ผู้ใช้นี้ได้");
+  });
+
+  message.reply("ส่ง DM เรียบร้อยแล้ว");
+}
 
   // ===================== !ลงคิว =====================
   if (cmd === "!ลงคิว") {
