@@ -148,7 +148,7 @@ client.on("messageCreate", async (message) => {
     message.reply("ปิดร้านแล้ว");
   }
 
-  // ===================== !dmall =====================
+// ===================== !dmall =====================
 if (cmd === "!dmall") {
   if (!isAdmin) return;
 
@@ -156,41 +156,41 @@ if (cmd === "!dmall") {
   if (!text) return message.reply("ใส่ข้อความก่อน");
 
   const guild = message.guild;
-
   await guild.members.fetch();
 
-  // ตรวจสอบว่ามีลิงก์รูปไหม
+  // ดึงลิงก์ทั้งหมด
   const imageUrls = text.match(/https?:\/\/\S+/g) || [];
 
-const cleanText = text
-  .replace(/https?:\/\/\S+/g, "")
-  .trim();
+  // ลบลิงก์ออกจากข้อความ
+  const cleanText = text
+    .replace(/https?:\/\/\S+/g, "")
+    .trim();
 
-const embed = new EmbedBuilder()
-  .setColor("Blue")
-  .setTitle("📢 ประกาศจาก SD DESIGN STUDIO")
-  .setDescription(cleanText)
-  .setFooter({
-    text: "SD DESIGN STUDIO"
-  })
-  .setTimestamp();
+  const embed = new EmbedBuilder()
+    .setColor("Blue")
+    .setTitle("📢 ประกาศจาก SD DESIGN STUDIO")
+    .setDescription(cleanText)
+    .setFooter({
+      text: "SD DESIGN STUDIO"
+    })
+    .setTimestamp();
 
   guild.members.cache.forEach(member => {
     if (member.user.bot) return;
 
     member.send({
-  embeds: [embed],
-  files: [
-    ...imageUrls,
-    ...[...message.attachments.values()].map(file => file.url)
-  ]
-}).catch(() => {});
+      embeds: [embed],
+      files: [
+        ...imageUrls,
+        ...[...message.attachments.values()].map(file => file.url)
+      ]
+    }).catch(() => {});
   });
 
   message.reply("ส่ง DM ทุกคนเรียบร้อยแล้ว");
 }
 
-  // ===================== !dmid =====================
+// ===================== !dmid =====================
 if (cmd === "!dmid") {
   if (!isAdmin) return;
 
@@ -204,28 +204,30 @@ if (cmd === "!dmid") {
 
   if (!user) return message.reply("ไม่พบผู้ใช้");
 
-  const imageUrl = text.match(/https?:\/\/\S+\.(png|jpg|jpeg|gif|webp)/i);
+  // ดึงลิงก์รูปทั้งหมด
+  const imageUrls = text.match(/https?:\/\/\S+/g) || [];
+
+  // เอาลิงก์รูปออกจากข้อความ
+  const cleanText = text
+    .replace(/https?:\/\/\S+/g, "")
+    .trim();
 
   const embed = new EmbedBuilder()
     .setColor("Purple")
     .setTitle("📢 ประกาศจาก SD DESIGN STUDIO")
-    .setDescription(text)
+    .setDescription(cleanText)
     .setFooter({
       text: "SD DESIGN STUDIO"
     })
     .setTimestamp();
 
-  if (imageUrl) {
-    embed.setImage(imageUrl[0]);
-  }
-
   await user.send({
-  embeds: [embed],
-  files: [
-    ...imageUrls,
-    ...[...message.attachments.values()].map(file => file.url)
-  ]
-}).catch(() => {
+    embeds: [embed],
+    files: [
+      ...imageUrls,
+      ...[...message.attachments.values()].map(file => file.url)
+    ]
+  }).catch(() => {
     message.reply("ไม่สามารถส่ง DM ให้ผู้ใช้นี้ได้");
   });
 
