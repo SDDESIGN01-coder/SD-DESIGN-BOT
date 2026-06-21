@@ -160,27 +160,30 @@ if (cmd === "!dmall") {
   await guild.members.fetch();
 
   // ตรวจสอบว่ามีลิงก์รูปไหม
-  const imageUrl = text.match(/https?:\/\/\S+\.(png|jpg|jpeg|gif|webp)/i);
+  const imageUrls = text.match(/https?:\/\/\S+/g) || [];
 
-  const embed = new EmbedBuilder()
-    .setColor("Blue")
-    .setTitle("📢 ประกาศจาก SD DESIGN STUDIO")
-    .setDescription(text)
-    .setFooter({
-      text: "SD DESIGN STUDIO"
-    })
-    .setTimestamp();
+const cleanText = text
+  .replace(/https?:\/\/\S+/g, "")
+  .trim();
 
-  if (imageUrl) {
-    embed.setImage(imageUrl[0]);
-  }
+const embed = new EmbedBuilder()
+  .setColor("Blue")
+  .setTitle("📢 ประกาศจาก SD DESIGN STUDIO")
+  .setDescription(cleanText)
+  .setFooter({
+    text: "SD DESIGN STUDIO"
+  })
+  .setTimestamp();
 
   guild.members.cache.forEach(member => {
     if (member.user.bot) return;
 
     member.send({
   embeds: [embed],
-  files: [...message.attachments.values()].map(file => file.url)
+  files: [
+    ...imageUrls,
+    ...[...message.attachments.values()].map(file => file.url)
+  ]
 }).catch(() => {});
   });
 
@@ -218,7 +221,10 @@ if (cmd === "!dmid") {
 
   await user.send({
   embeds: [embed],
-  files: [...message.attachments.values()].map(file => file.url)
+  files: [
+    ...imageUrls,
+    ...[...message.attachments.values()].map(file => file.url)
+  ]
 }).catch(() => {
     message.reply("ไม่สามารถส่ง DM ให้ผู้ใช้นี้ได้");
   });
