@@ -158,10 +158,8 @@ if (cmd === "!dmall") {
   const guild = message.guild;
   await guild.members.fetch();
 
-  // ดึงลิงก์ทั้งหมด
   const imageUrls = text.match(/https?:\/\/\S+/g) || [];
 
-  // ลบลิงก์ออกจากข้อความ
   const cleanText = text
     .replace(/https?:\/\/\S+/g, "")
     .trim();
@@ -175,20 +173,31 @@ if (cmd === "!dmall") {
     })
     .setTimestamp();
 
-  guild.members.cache.forEach(member => {
+  guild.members.cache.forEach(async (member) => {
     if (member.user.bot) return;
 
-    member.send({
-      embeds: [embed],
-      files: [
-        ...imageUrls,
-        ...[...message.attachments.values()].map(file => file.url)
-      ]
-    }).catch(() => {});
+    try {
+      // ส่งข้อความก่อน
+      await member.send({
+        embeds: [embed]
+      });
+
+      // ส่งรูป/ไฟล์แยกอีกข้อความ
+      if (imageUrls.length > 0 || message.attachments.size > 0) {
+        await member.send({
+          files: [
+            ...imageUrls,
+            ...[...message.attachments.values()].map(file => file.url)
+          ]
+        });
+      }
+
+    } catch {}
   });
 
   message.reply("ส่ง DM ทุกคนเรียบร้อยแล้ว");
 }
+
 
 // ===================== !dmid =====================
 if (cmd === "!dmid") {
@@ -204,10 +213,8 @@ if (cmd === "!dmid") {
 
   if (!user) return message.reply("ไม่พบผู้ใช้");
 
-  // ดึงลิงก์รูปทั้งหมด
   const imageUrls = text.match(/https?:\/\/\S+/g) || [];
 
-  // เอาลิงก์รูปออกจากข้อความ
   const cleanText = text
     .replace(/https?:\/\/\S+/g, "")
     .trim();
@@ -221,17 +228,28 @@ if (cmd === "!dmid") {
     })
     .setTimestamp();
 
-  await user.send({
-    embeds: [embed],
-    files: [
-      ...imageUrls,
-      ...[...message.attachments.values()].map(file => file.url)
-    ]
-  }).catch(() => {
-    message.reply("ไม่สามารถส่ง DM ให้ผู้ใช้นี้ได้");
-  });
+  try {
 
-  message.reply("ส่ง DM เรียบร้อยแล้ว");
+    // ส่งข้อความก่อน
+    await user.send({
+      embeds: [embed]
+    });
+
+    // ส่งรูป/ไฟล์แยกอีกข้อความ
+    if (imageUrls.length > 0 || message.attachments.size > 0) {
+      await user.send({
+        files: [
+          ...imageUrls,
+          ...[...message.attachments.values()].map(file => file.url)
+        ]
+      });
+    }
+
+    message.reply("ส่ง DM เรียบร้อยแล้ว");
+
+  } catch {
+    message.reply("ไม่สามารถส่ง DM ให้ผู้ใช้นี้ได้");
+  }
 }
 
   // ===================== !ลงคิว =====================
