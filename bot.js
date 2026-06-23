@@ -1,4 +1,5 @@
 require("dotenv").config();
+const db = require("./firebase");
 
 const {
   Client,
@@ -43,12 +44,11 @@ client.once("ready", () => {
 
 // ===================== OPEN SHOP =====================
 async function sendOpenShop(channel) {
-  await channel.send(`<@&${ROLE_ID}>`);
 
   const embed = new EmbedBuilder()
     .setColor("Green")
-    .setTitle("ประกาศขณะนี้ ร้านกำลังเปิดรับคิวอยู่น๊าา <:shield:1502734762538958949>")
-    .setTitle("สั่งงานกดเปิด Ticket มาได้เลย")
+    .setTitle(`ประกาศขณะนี้ ร้านกำลังเปิดรับคิวอยู่น๊าา <:shield:1502734762538958949>
+               สั่งงานกดเปิด Ticket มาได้เลย`)
     .setDescription(`
 
 **วิธีการสั่งงาน**
@@ -66,17 +66,22 @@ async function sendOpenShop(channel) {
     .setImage("https://cdn.discordapp.com/attachments/1446892511514722374/1503056453504860412/Open_for_queue.png")
     .setTimestamp();
 
-  await channel.send({ embeds: [embed] });
+  await channel.send({
+    content: `<@&${ROLE_ID}>`,
+    embeds: [embed],
+    allowedMentions: {
+      roles: [ROLE_ID]
+    }
+  });
 }
 
 // ===================== CLOSE SHOP =====================
 async function sendCloseShop(channel) {
-  await channel.send(`<@&${ROLE_ID}>`);
 
   const embed = new EmbedBuilder()
     .setColor("Red")
-    .setTitle("ประกาศขณะนี้ ร้านกำลังปิดรับคิวอยู่น๊าา <:cross:1503070258217484410>")
-    .setTitle("มาใหม่วันพรุ่งนี้เวลาร้านเปิด")
+    .setTitle(`ประกาศขณะนี้ ร้านกำลังปิดรับคิวอยู่น๊าา <:cross:1503070258217484410>
+               มาใหม่วันพรุ่งนี้เวลาร้านเปิด`)
     .setDescription(`
 
 **วิธีการสั่งงาน**
@@ -93,11 +98,17 @@ async function sendCloseShop(channel) {
     .setImage("https://cdn.discordapp.com/attachments/1446892511514722374/1503069494959018005/Queue_Closed.png")
     .setTimestamp();
 
-  await channel.send({ embeds: [embed] });
+  await channel.send({
+    content: `<@&${ROLE_ID}>`,
+    embeds: [embed],
+    allowedMentions: {
+      roles: [ROLE_ID]
+    }
+  });
 }
 
 // ===================== MESSAGE COMMANDS =====================
-client.on("messageCreate", async (message) => {
+  client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
   const args = message.content.split(" ");
@@ -107,6 +118,184 @@ client.on("messageCreate", async (message) => {
     PermissionsBitField.Flags.Administrator
   );
 
+
+      if (cmd === "!addpoint") {
+    if (!isAdmin) return;
+
+    const userId = args[1];
+    const amount = parseInt(args[2]);
+
+    if (!userId || !amount)
+    return message.reply("!addpoint <IDลูกค้า> <จำนวนแต้ม>");
+
+    const user = await client.users.fetch(userId).catch(() => null);
+    if (!user) return message.reply("ไม่พบผู้ใช้");
+
+    const ref = db.collection("users").doc(userId);
+
+    const doc = await ref.get();
+
+    let currentPoint = 0;
+
+    if (doc.exists) {
+    currentPoint = doc.data().points || 0;
+    }
+
+    currentPoint += amount;
+
+    await ref.set({
+    username: user.username,
+    points: currentPoint
+    }, { merge: true });
+
+    await user.send({
+    embeds: [
+    new EmbedBuilder()
+    .setColor("Green")
+    .setTitle("⭐ ได้รับแต้มสะสม")
+    .setDescription(
+    `ได้รับ +${amount} แต้ม
+
+    แต้มปัจจุบัน : ${currentPoint} แต้ม
+
+    ขอบคุณที่ใช้บริการ SD DESIGN STUDIO 💜`)
+    ]
+    });
+
+    return message.reply(`เพิ่ม ${amount} แต้มให้ ${user.username} แล้ว`);
+    }
+
+    if (cmd === "!mypoint") {
+
+    const ref = db.collection("users").doc(message.author.id);
+
+    const doc = await ref.get();
+
+    const point = doc.exists ? doc.data().points || 0 : 0;
+
+    const embed = new EmbedBuilder()
+    .setColor("Blue")
+    .setTitle("💎 แต้มสะสมของคุณ")
+    .setDescription(`
+    ⭐ แต้มปัจจุบัน : ${point} แต้ม
+
+    🎁 ของรางวัล
+
+    10 แต้ม = ลด 10%
+    20 แต้ม = ลด 20%
+    30 แต้ม = ลด 30%
+    `)
+    .setTimestamp();
+
+    return message.reply({
+embeds:[embed]
+});
+
+    }
+
+    if (cmd === "!redeem") {
+
+    const embed = new EmbedBuilder()
+    .setColor("Gold")
+    .setTitle("🎁 ร้านแลกของรางวัล")
+    .setDescription(`
+    เลือกของรางวัลที่ต้องการแลก
+
+    50 แต้ม = ลด 10%
+    100 แต้ม = ลด 20%
+    150 แต้ม = ลด 30%
+    `);
+
+    const row = new ActionRowBuilder()
+    .addComponents(
+    new ButtonBuilder()
+    .setCustomId("reward10")
+    .setLabel("🎁 ลด 10%")
+    .setStyle(ButtonStyle.Primary),
+
+    new ButtonBuilder()
+    .setCustomId("reward20")
+    .setLabel("🎁 ลด 20%")
+    .setStyle(ButtonStyle.Success),
+
+    new ButtonBuilder()
+    .setCustomId("reward30")
+    .setLabel("🎁 ลด 30%")
+    .setStyle(ButtonStyle.Danger)
+    );
+
+    return message.reply({
+  embeds:[embed],
+  components:[row]
+  });
+
+    }
+
+
+    if (cmd === "!point") {
+
+    if (!isAdmin) return;
+
+    const userId = args[1];
+
+    if (!userId)
+    return message.reply("!point <IDลูกค้า>");
+
+    const ref = db.collection("users").doc(userId);
+
+    const doc = await ref.get();
+
+    if (!doc.exists)
+    return message.reply("ไม่พบข้อมูล");
+
+    const data = doc.data();
+
+    const embed = new EmbedBuilder()
+    .setColor("Yellow")
+    .setTitle("📋 ข้อมูลลูกค้า")
+    .addFields(
+    {
+    name:"ชื่อ",
+    value:data.username
+    },
+    {
+    name:"แต้ม",
+    value:data.points.toString()
+    }
+    );
+
+    return message.reply({
+embeds:[embed]
+});
+
+    }
+  
+    if (cmd === "!allpoint") {
+
+    if (!isAdmin) return;
+
+    const snapshot = await db.collection("users").get();
+
+    let text = "";
+
+    snapshot.forEach(doc=>{
+
+    const data = doc.data();
+
+    text += `👤 ${data.username} - ⭐ ${data.points} แต้ม\n`;
+
+    });
+
+    const embed = new EmbedBuilder()
+    .setColor("Purple")
+    .setTitle("💎 รายชื่อลูกค้าทั้งหมด")
+    .setDescription(text || "ไม่มีข้อมูล");
+
+    return message.reply({
+embeds:[embed]
+});
+
+    }
   // ===================== !เปิดร้าน =====================
   if (cmd === "!เปิดร้าน") {
     if (!isAdmin) return;
@@ -130,7 +319,7 @@ client.on("messageCreate", async (message) => {
 
     }, 3 * 60 * 60 * 1000);
 
-    message.reply("เปิดร้าน + auto 3 ชั่วโมงแล้ว");
+    return message.reply("เปิดร้าน + auto 3 ชั่วโมงแล้ว");
   }
 
   // ===================== !ปิดร้าน =====================
@@ -145,7 +334,7 @@ client.on("messageCreate", async (message) => {
 
     await sendCloseShop(channel);
 
-    message.reply("ปิดร้านแล้ว");
+    return message.reply("ปิดร้านแล้ว");
   }
 
 // ===================== !dmall =====================
@@ -195,7 +384,7 @@ if (cmd === "!dmall") {
     } catch {}
   });
 
-  message.reply("ส่ง DM ทุกคนเรียบร้อยแล้ว");
+  return message.reply("ส่ง DM ทุกคนเรียบร้อยแล้ว");
 }
 
 
@@ -245,10 +434,10 @@ if (cmd === "!dmid") {
       });
     }
 
-    message.reply("ส่ง DM เรียบร้อยแล้ว");
+    return message.reply("ส่ง DM เรียบร้อยแล้ว");
 
   } catch {
-    message.reply("ไม่สามารถส่ง DM ให้ผู้ใช้นี้ได้");
+    return message.reply("ไม่สามารถส่ง DM ให้ผู้ใช้นี้ได้");
   }
 }
 
@@ -315,13 +504,115 @@ if (cmd === "!dmid") {
       userId: message.author.id
     });
 
-    message.reply("ลงคิวแล้ว <:Red_Verified:1492952897988722688>");
+    return message.reply("ลงคิวแล้ว <:Red_Verified:1492952897988722688>");
   }
 });
 
-// ===================== BUTTON SYSTEM =====================
-client.on(Events.InteractionCreate, async (interaction) => {
-  if (!interaction.isButton()) return;
+  // ===================== BUTTON SYSTEM =====================
+  client.on(Events.InteractionCreate, async (interaction) => {
+    if (!interaction.isButton()) return; 
+    
+    if (
+  interaction.customId === "reward10" ||
+  interaction.customId === "reward20" ||
+  interaction.customId === "reward30"
+  ){
+
+  const ref = db.collection("users").doc(interaction.user.id);
+
+  const doc = await ref.get();
+
+  if(!doc.exists)
+  return interaction.reply({
+  content:"ไม่มีข้อมูลแต้ม",
+  ephemeral:true
+  });
+
+  let point = doc.data().points || 0;
+
+  let needPoint = 0;
+  let reward = "";
+
+  if(interaction.customId==="reward10"){
+  needPoint = 50;
+  reward = "🎁 ส่วนลด 10%";
+  }
+
+  if(interaction.customId==="reward20"){
+  needPoint = 100;
+  reward = "🎁 ส่วนลด 20%";
+  }
+
+  if(interaction.customId==="reward30"){
+  needPoint = 150;
+  reward = "🎁 ส่วนลด 30%";
+  }
+
+  if(point < needPoint){
+
+  return interaction.reply({
+  embeds:[
+  new EmbedBuilder()
+  .setColor("Red")
+  .setTitle("❌ แต้มไม่พอ")
+  .setDescription(
+  `ต้องใช้ ${needPoint} แต้ม
+
+  แต้มปัจจุบัน : ${point}`
+  )
+  ],
+  ephemeral:true
+  });
+
+  }
+
+  point -= needPoint;
+
+  await ref.update({
+  points:point
+  });
+
+  const embed = new EmbedBuilder()
+  .setColor("Green")
+  .setTitle("🎉 แลกของรางวัลสำเร็จ")
+  .setDescription(`
+  ${reward}
+
+  ใช้แต้ม : ${needPoint}
+
+  แต้มคงเหลือ : ${point}
+  `)
+  .setTimestamp();
+
+  await interaction.reply({
+  embeds:[embed]
+  });
+
+    const logChannel = await client.channels.fetch("1519017976265703636").catch(() => null);
+
+    if (logChannel) {
+  await logChannel.send({
+    embeds: [
+      new EmbedBuilder()
+        .setColor("Yellow")
+        .setTitle("🎁 มีการแลกของรางวัล")
+        .setDescription(`
+ลูกค้า : ${interaction.user.tag}
+
+รางวัล :
+${reward}
+
+ใช้ ${needPoint} แต้ม
+
+เหลือ ${point} แต้ม
+`)
+    ]
+  });
+}
+
+    return;
+
+  }
 
   const [type, id] = interaction.customId.split("_");
   const queue = queues.get(id);
@@ -428,10 +719,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
     });
   } catch {}
 
-  interaction.reply({
-    content: "ส่งงาน + อัปเดต + DM แล้ว",
-    ephemeral: true
-  });
+  return interaction.reply({
+  content: "ส่งงาน + อัปเดต + DM แล้ว",
+  ephemeral: true
+    });
 });
 
 // ===================== LOGIN =====================
@@ -447,3 +738,4 @@ app.get("/", (req, res) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log("Web server running");
 });
+
