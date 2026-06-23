@@ -36,7 +36,6 @@ let shopChannelId = null;
 let shopInterval = null;
 
 const queues = new Map();
-const redeemedUsers = new Map();
 // ===================== READY =====================
 client.once("ready", () => {
   console.log(`${client.user.tag} ออนไลน์แล้ว`);
@@ -543,12 +542,6 @@ function disableRedeemButtons() {
 
   await interaction.deferReply({ ephemeral: true }); // ✅ FIX interaction failed
 
-  if (redeemedUsers.has(interaction.user.id)) {
-    return interaction.editReply({
-      content: "คุณได้แลกของรางวัลไปแล้ว ใช้ได้ 1 ครั้งเท่านั้น"
-    });
-  }
-
   const ref = db.collection("users").doc(interaction.user.id);
   const doc = await ref.get();
 
@@ -593,7 +586,6 @@ function disableRedeemButtons() {
 
   await ref.update({ points: point });
 
-  redeemedUsers.set(interaction.user.id, true);
 
   // ✅ ปิดปุ่ม (กันพัง)
   try {
