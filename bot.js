@@ -206,28 +206,27 @@ embeds:[embed]
     150 แต้ม = ลด 30%
     `);
 
-    const row = new ActionRowBuilder()
-    .addComponents(
+    function disableRedeemButtons() {
+  return new ActionRowBuilder().addComponents(
     new ButtonBuilder()
-    .setCustomId("reward10")
-    .setLabel("🎁 ลด 10%")
-    .setStyle(ButtonStyle.Primary),
+      .setCustomId("reward10")
+      .setLabel("🎁 ลด 10%")
+      .setStyle(ButtonStyle.Primary)
+      .setDisabled(true),
 
     new ButtonBuilder()
-    .setCustomId("reward20")
-    .setLabel("🎁 ลด 20%")
-    .setStyle(ButtonStyle.Success),
+      .setCustomId("reward20")
+      .setLabel("🎁 ลด 20%")
+      .setStyle(ButtonStyle.Success)
+      .setDisabled(true),
 
     new ButtonBuilder()
-    .setCustomId("reward30")
-    .setLabel("🎁 ลด 30%")
-    .setStyle(ButtonStyle.Danger)
-    );
-
-    return message.reply({
-  embeds:[embed],
-  components:[row]
-  });
+      .setCustomId("reward30")
+      .setLabel("🎁 ลด 30%")
+      .setStyle(ButtonStyle.Danger)
+      .setDisabled(true)
+  );
+}
 
     }
 
@@ -517,17 +516,7 @@ if (cmd === "!dmid") {
   interaction.customId === "reward20" ||
   interaction.customId === "reward30"
   ){
-   const ref = db.collection("users").doc(interaction.user.id);
 
-// เช็คก่อนว่าเคยแลกแล้วไหม
-const already = await ref.get();
-
-if (already.exists && already.data().redeemed) {
-  return interaction.reply({
-    content: "❌ คุณได้แลกของรางวัลไปแล้ว ไม่สามารถแลกซ้ำได้",
-    ephemeral: true
-  });
-}
   const ref = db.collection("users").doc(interaction.user.id);
 
   const doc = await ref.get();
@@ -581,10 +570,7 @@ if (already.exists && already.data().redeemed) {
   await ref.update({
   points:point
   });
-  await ref.set({
-  redeemed: true,
-  redeemedAt: new Date()
-  }, { merge: true });
+
   const embed = new EmbedBuilder()
   .setColor("Green")
   .setTitle("🎉 แลกของรางวัลสำเร็จ")
@@ -600,6 +586,10 @@ if (already.exists && already.data().redeemed) {
   await interaction.reply({
   embeds:[embed]
   });
+  // 🔥 ปิดปุ่มทั้งหมดทันที
+await interaction.message.edit({
+  components: [disableRedeemButtons()]
+});
 
     const logChannel = await client.channels.fetch("1519017976265703636").catch(() => null);
 
