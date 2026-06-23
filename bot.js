@@ -47,7 +47,7 @@ async function sendOpenShop(channel) {
 
   const embed = new EmbedBuilder()
     .setColor("Green")
-    .setTitle(`ประกาศขณะนี้ ร้านกำลังเปิดรับคิวอยู่น๊า <:shield:1502734762538958949>
+    .setTitle(`ประกาศขณะนี้ ร้านกำลังเปิดรับคิวอยู่น๊าา <:shield:1502734762538958949>
                สั่งงานกดเปิด Ticket มาได้เลย`)
     .setDescription(`
 
@@ -319,7 +319,7 @@ embeds:[embed]
 
     }, 3 * 60 * 60 * 1000);
 
-    return message.reply("เปิดร้าน + auto 3 ชั่วโมงเรียบร้อยแล้ว");
+    return message.reply("เปิดร้าน + auto 3 ชั่วโมงแล้ว");
   }
 
   // ===================== !ปิดร้าน =====================
@@ -517,7 +517,17 @@ if (cmd === "!dmid") {
   interaction.customId === "reward20" ||
   interaction.customId === "reward30"
   ){
+   const ref = db.collection("users").doc(interaction.user.id);
 
+// เช็คก่อนว่าเคยแลกแล้วไหม
+const already = await ref.get();
+
+if (already.exists && already.data().redeemed) {
+  return interaction.reply({
+    content: "❌ คุณได้แลกของรางวัลไปแล้ว ไม่สามารถแลกซ้ำได้",
+    ephemeral: true
+  });
+}
   const ref = db.collection("users").doc(interaction.user.id);
 
   const doc = await ref.get();
@@ -571,7 +581,10 @@ if (cmd === "!dmid") {
   await ref.update({
   points:point
   });
-
+  await ref.set({
+  redeemed: true,
+  redeemedAt: new Date()
+  }, { merge: true });
   const embed = new EmbedBuilder()
   .setColor("Green")
   .setTitle("🎉 แลกของรางวัลสำเร็จ")
