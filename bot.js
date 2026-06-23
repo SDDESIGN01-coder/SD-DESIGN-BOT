@@ -194,10 +194,6 @@ embeds:[embed]
 
      if (cmd === "!redeem") {
 
-  if (redeemedUsers.has(message.author.id)) {
-    return message.reply("คุณได้แลกของรางวัลไปแล้ว ใช้ได้ 1 ครั้งเท่านั้น");
-  }
-
   const embed = new EmbedBuilder()
     .setColor("Gold")
     .setTitle("🎁 ร้านแลกของรางวัล")
