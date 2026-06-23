@@ -47,21 +47,21 @@ async function sendOpenShop(channel) {
 
   const embed = new EmbedBuilder()
     .setColor("Green")
-    .setTitle("📢 ประกาศขณะนี้ ร้านกำลังเปิดรับคิวอยู่น๊าา <:shield:1502734762538958949>")
+    .setTitle("ประกาศขณะนี้ ร้านกำลังเปิดรับคิวอยู่น๊าา <:shield:1502734762538958949>")
+    .setTitle("สั่งงานกดเปิด Ticket มาได้เลย")
     .setDescription(`
-สั่งงานกดเปิด Ticket มาได้เลย
 
 **วิธีการสั่งงาน**
 ลูกค้าสามารถกดเปิด Ticket
 และสั่งงานภายใน Ticket ของตัวเองได้เลยน๊า <:check:1445834442596683860>
-
 \`\`\`
 เวลาเปิดร้าน & รับคิว
 • 08:00 - 22:00
-
-เวลาทำงาน
+เวลาทำงานของทางร้าน
 • 20:00 - 00:00
 \`\`\`
+(หากลูกค้า เปิด Ticket สั่งงาน ทางร้านจะตอบกลับ หรือหาก
+เปิดTicketสั่งนอกเวลาดังกล่าว ทางร้านจะมาตอบในเวลา ที่แจ้งไว้ )
 `)
     .setImage("https://cdn.discordapp.com/attachments/1446892511514722374/1503056453504860412/Open_for_queue.png")
     .setTimestamp();
@@ -75,20 +75,20 @@ async function sendCloseShop(channel) {
 
   const embed = new EmbedBuilder()
     .setColor("Red")
-    .setTitle("📢 ประกาศขณะนี้ ร้านกำลังปิดรับคิวอยู่น๊าา <:cross:1503070258217484410>")
+    .setTitle("ประกาศขณะนี้ ร้านกำลังปิดรับคิวอยู่น๊าา <:cross:1503070258217484410>")
+    .setTitle("มาใหม่วันพรุ่งนี้เวลาร้านเปิด")
     .setDescription(`
-มาใหม่วันพรุ่งนี้เวลาร้านเปิด
 
 **วิธีการสั่งงาน**
 ลูกค้าสามารถกดเปิด Ticket ได้ <:Red_Verified:1492952897988722688>
-
 \`\`\`
 เวลาเปิดร้าน & รับคิว
 • 08:00 - 22:00
-
-เวลาทำงาน
+เวลาทำงานของทางร้าน
 • 20:00 - 00:00
 \`\`\`
+(หากลูกค้า เปิด Ticket สั่งงาน ทางร้านจะตอบกลับ หรือหาก
+เปิดTicketสั่งนอกเวลาดังกล่าว ทางร้านจะมาตอบในเวลา ที่แจ้งไว้ )
 `)
     .setImage("https://cdn.discordapp.com/attachments/1446892511514722374/1503069494959018005/Queue_Closed.png")
     .setTimestamp();
@@ -166,7 +166,7 @@ if (cmd === "!dmall") {
 
   const embed = new EmbedBuilder()
     .setColor("Blue")
-    .setTitle("📢 ประกาศจาก SD DESIGN STUDIO")
+    .setTitle("📢 ประกาศจากร้าน SD DESIGN STUDIO")
     .setDescription(cleanText)
     .setFooter({
       text: "SD DESIGN STUDIO"
@@ -221,7 +221,7 @@ if (cmd === "!dmid") {
 
   const embed = new EmbedBuilder()
     .setColor("Purple")
-    .setTitle("📢 ประกาศจาก SD DESIGN STUDIO")
+    .setTitle("📢 ประกาศจากร้าน SD DESIGN STUDIO")
     .setDescription(cleanText)
     .setFooter({
       text: "SD DESIGN STUDIO"
@@ -315,7 +315,7 @@ if (cmd === "!dmid") {
       userId: message.author.id
     });
 
-    message.reply("ลงคิวแล้ว");
+    message.reply("ลงคิวแล้ว <:Red_Verified:1492952897988722688>");
   }
 });
 
