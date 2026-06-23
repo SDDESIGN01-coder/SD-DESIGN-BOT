@@ -36,7 +36,7 @@ let shopChannelId = null;
 let shopInterval = null;
 
 const queues = new Map();
-
+const redeemedUsers = new Map();
 // ===================== READY =====================
 client.once("ready", () => {
   console.log(`${client.user.tag} ออนไลน์แล้ว`);
@@ -194,6 +194,10 @@ embeds:[embed]
     }
 
      if (cmd === "!redeem") {
+
+  if (redeemedUsers.has(message.author.id)) {
+    return message.reply("คุณได้แลกของรางวัลไปแล้ว ใช้ได้ 1 ครั้งเท่านั้น");
+  }
 
   const embed = new EmbedBuilder()
     .setColor("Gold")
@@ -506,7 +510,28 @@ if (cmd === "!dmid") {
   }
 });
 
-  // ===================== BUTTON SYSTEM =====================
+  // ===================== REDEEM BUTTON DISABLE =====================
+function disableRedeemButtons() {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId("reward10")
+      .setLabel("🎁 ลด 10%")
+      .setStyle(ButtonStyle.Primary)
+      .setDisabled(true),
+
+    new ButtonBuilder()
+      .setCustomId("reward20")
+      .setLabel("🎁 ลด 20%")
+      .setStyle(ButtonStyle.Success)
+      .setDisabled(true),
+
+    new ButtonBuilder()
+      .setCustomId("reward30")
+      .setLabel("🎁 ลด 30%")
+      .setStyle(ButtonStyle.Danger)
+      .setDisabled(true)
+  );
+}
   client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isButton()) return; 
     
@@ -514,107 +539,104 @@ if (cmd === "!dmid") {
   interaction.customId === "reward10" ||
   interaction.customId === "reward20" ||
   interaction.customId === "reward30"
-  ){
+) {
+
+  if (redeemedUsers.has(interaction.user.id)) {
+    return interaction.reply({
+      content: "คุณได้แลกของรางวัลไปแล้ว ใช้ได้ 1 ครั้งเท่านั้น",
+      ephemeral: true
+    });
+  }
 
   const ref = db.collection("users").doc(interaction.user.id);
-
   const doc = await ref.get();
 
-  if(!doc.exists)
-  return interaction.reply({
-  content:"ไม่มีข้อมูลแต้ม",
-  ephemeral:true
-  });
+  if (!doc.exists) {
+    return interaction.reply({
+      content: "ไม่มีข้อมูลแต้ม",
+      ephemeral: true
+    });
+  }
 
   let point = doc.data().points || 0;
 
   let needPoint = 0;
   let reward = "";
 
-  if(interaction.customId==="reward10"){
-  needPoint = 50;
-  reward = "🎁 ส่วนลด 10%";
+  if (interaction.customId === "reward10") {
+    needPoint = 50;
+    reward = "🎁 ส่วนลด 10%";
   }
 
-  if(interaction.customId==="reward20"){
-  needPoint = 100;
-  reward = "🎁 ส่วนลด 20%";
+  if (interaction.customId === "reward20") {
+    needPoint = 100;
+    reward = "🎁 ส่วนลด 20%";
   }
 
-  if(interaction.customId==="reward30"){
-  needPoint = 150;
-  reward = "🎁 ส่วนลด 30%";
+  if (interaction.customId === "reward30") {
+    needPoint = 150;
+    reward = "🎁 ส่วนลด 30%";
   }
 
-  if(point < needPoint){
-
-  return interaction.reply({
-  embeds:[
-  new EmbedBuilder()
-  .setColor("Red")
-  .setTitle("❌ แต้มไม่พอ")
-  .setDescription(
-  `ต้องใช้ ${needPoint} แต้ม
-
-  แต้มปัจจุบัน : ${point}`
-  )
-  ],
-  ephemeral:true
-  });
-
+  if (point < needPoint) {
+    return interaction.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setColor("Red")
+          .setTitle("❌ แต้มไม่พอ")
+          .setDescription(`ต้องใช้ ${needPoint} แต้ม\nแต้มปัจจุบัน : ${point}`)
+      ],
+      ephemeral: true
+    });
   }
 
   point -= needPoint;
 
-  await ref.update({
-  points:point
+  await ref.update({ points: point });
+
+  // ล็อกว่าใช้แล้ว
+  redeemedUsers.set(interaction.user.id, true);
+
+  // ปิดปุ่ม (ครั้งเดียวพอ)
+  await interaction.message.edit({
+    components: [disableRedeemButtons()]
   });
 
   const embed = new EmbedBuilder()
-  .setColor("Green")
-  .setTitle("🎉 แลกของรางวัลสำเร็จ")
-  .setDescription(`
-  ${reward}
-
-  ใช้แต้ม : ${needPoint}
-
-  แต้มคงเหลือ : ${point}
-  `)
-  .setTimestamp();
-
-  await interaction.reply({
-  embeds:[embed]
-  });
-  // 🔥 ปิดปุ่มทั้งหมดทันที
-await interaction.message.edit({
-  components: [disableRedeemButtons()]
-});
-
-    const logChannel = await client.channels.fetch("1519017976265703636").catch(() => null);
-
-    if (logChannel) {
-  await logChannel.send({
-    embeds: [
-      new EmbedBuilder()
-        .setColor("Yellow")
-        .setTitle("🎁 มีการแลกของรางวัล")
-        .setDescription(`
-ลูกค้า : ${interaction.user.tag}
-
-รางวัล :
+    .setColor("Green")
+    .setTitle("🎉 แลกของรางวัลสำเร็จ")
+    .setDescription(`
 ${reward}
 
-ใช้ ${needPoint} แต้ม
+ใช้แต้ม : ${needPoint}
+แต้มคงเหลือ : ${point}
+`);
 
+  await interaction.reply({
+    embeds: [embed]
+  });
+
+  const logChannel = await client.channels.fetch("1519017976265703636").catch(() => null);
+
+  if (logChannel) {
+    await logChannel.send({
+      embeds: [
+        new EmbedBuilder()
+          .setColor("Yellow")
+          .setTitle("🎁 มีการแลกของรางวัล")
+          .setDescription(`
+ลูกค้า : ${interaction.user.tag}
+
+รางวัล : ${reward}
+ใช้ ${needPoint} แต้ม
 เหลือ ${point} แต้ม
 `)
-    ]
-  });
-}
-
-    return;
-
+      ]
+    });
   }
+
+  return;
+}
 
   const [type, id] = interaction.customId.split("_");
   const queue = queues.get(id);
@@ -740,4 +762,3 @@ app.get("/", (req, res) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log("Web server running");
 });
-
