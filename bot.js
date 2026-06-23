@@ -193,42 +193,41 @@ embeds:[embed]
 
     }
 
-    if (cmd === "!redeem") {
+     if (cmd === "!redeem") {
 
-    const embed = new EmbedBuilder()
+  const embed = new EmbedBuilder()
     .setColor("Gold")
     .setTitle("🎁 ร้านแลกของรางวัล")
     .setDescription(`
-    เลือกของรางวัลที่ต้องการแลก
+เลือกของรางวัลที่ต้องการแลก
 
-    50 แต้ม = ลด 10%
-    100 แต้ม = ลด 20%
-    150 แต้ม = ลด 30%
-    `);
+50 แต้ม = ลด 10%
+100 แต้ม = ลด 20%
+150 แต้ม = ลด 30%
+`);
 
-    function disableRedeemButtons() {
-  return new ActionRowBuilder().addComponents(
+  const row = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId("reward10")
       .setLabel("🎁 ลด 10%")
-      .setStyle(ButtonStyle.Primary)
-      .setDisabled(true),
+      .setStyle(ButtonStyle.Primary),
 
     new ButtonBuilder()
       .setCustomId("reward20")
       .setLabel("🎁 ลด 20%")
-      .setStyle(ButtonStyle.Success)
-      .setDisabled(true),
+      .setStyle(ButtonStyle.Success),
 
     new ButtonBuilder()
       .setCustomId("reward30")
       .setLabel("🎁 ลด 30%")
       .setStyle(ButtonStyle.Danger)
-      .setDisabled(true)
   );
-}
 
-    }
+  return message.reply({
+    embeds: [embed],
+    components: [row]
+  });
+}
 
 
     if (cmd === "!point") {
