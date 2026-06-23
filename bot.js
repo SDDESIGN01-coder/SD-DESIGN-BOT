@@ -541,10 +541,11 @@ function disableRedeemButtons() {
   interaction.customId === "reward30"
 ) {
 
+  await interaction.deferReply({ ephemeral: true }); // ✅ FIX interaction failed
+
   if (redeemedUsers.has(interaction.user.id)) {
-    return interaction.reply({
-      content: "คุณได้แลกของรางวัลไปแล้ว ใช้ได้ 1 ครั้งเท่านั้น",
-      ephemeral: true
+    return interaction.editReply({
+      content: "คุณได้แลกของรางวัลไปแล้ว ใช้ได้ 1 ครั้งเท่านั้น"
     });
   }
 
@@ -552,9 +553,8 @@ function disableRedeemButtons() {
   const doc = await ref.get();
 
   if (!doc.exists) {
-    return interaction.reply({
-      content: "ไม่มีข้อมูลแต้ม",
-      ephemeral: true
+    return interaction.editReply({
+      content: "ไม่มีข้อมูลแต้ม"
     });
   }
 
@@ -579,14 +579,13 @@ function disableRedeemButtons() {
   }
 
   if (point < needPoint) {
-    return interaction.reply({
+    return interaction.editReply({
       embeds: [
         new EmbedBuilder()
           .setColor("Red")
           .setTitle("❌ แต้มไม่พอ")
           .setDescription(`ต้องใช้ ${needPoint} แต้ม\nแต้มปัจจุบัน : ${point}`)
-      ],
-      ephemeral: true
+      ]
     });
   }
 
@@ -594,13 +593,16 @@ function disableRedeemButtons() {
 
   await ref.update({ points: point });
 
-  // ล็อกว่าใช้แล้ว
   redeemedUsers.set(interaction.user.id, true);
 
-  // ปิดปุ่ม (ครั้งเดียวพอ)
-  await interaction.message.edit({
-    components: [disableRedeemButtons()]
-  });
+  // ✅ ปิดปุ่ม (กันพัง)
+  try {
+    await interaction.message.edit({
+      components: [disableRedeemButtons()]
+    });
+  } catch (err) {
+    console.log("edit button error:", err);
+  }
 
   const embed = new EmbedBuilder()
     .setColor("Green")
@@ -612,7 +614,7 @@ ${reward}
 แต้มคงเหลือ : ${point}
 `);
 
-  await interaction.reply({
+  await interaction.editReply({
     embeds: [embed]
   });
 
