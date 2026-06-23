@@ -355,7 +355,7 @@ if (cmd === "!dmall") {
 
   const embed = new EmbedBuilder()
     .setColor("Blue")
-    .setTitle("📢 ประกาศจากร้าน SD DESIGN STUDIO")
+    .setTitle("📢 ประกาศจากทางร้าน SD DESIGN STUDIO")
     .setDescription(cleanText)
     .setFooter({
       text: "SD DESIGN STUDIO"
