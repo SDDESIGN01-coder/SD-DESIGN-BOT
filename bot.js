@@ -47,7 +47,7 @@ async function sendOpenShop(channel) {
 
   const embed = new EmbedBuilder()
     .setColor("Green")
-    .setTitle(`ประกาศขณะนี้ ร้านกำลังเปิดรับคิวอยู่น๊าา <:shield:1502734762538958949>
+    .setTitle(`ประกาศขณะนี้ ร้านกำลังเปิดรับคิวอยู่น๊า <:shield:1502734762538958949>
                สั่งงานกดเปิด Ticket มาได้เลย`)
     .setDescription(`
 
