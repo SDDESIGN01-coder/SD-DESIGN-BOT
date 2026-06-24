@@ -1,3 +1,6 @@
+console.log("TOKEN LENGTH =", process.env.TOKEN?.length);
+console.log("PROJECT =", process.env.FIREBASE_PROJECT_ID);
+
 require("dotenv").config();
 const db = require("./firebase");
 
@@ -740,19 +743,26 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 // ===================== LOGIN =====================
+process.on("unhandledRejection", console.error);
+process.on("uncaughtException", console.error);
+
 console.log("TOKEN =", TOKEN ? "FOUND" : "NOT FOUND");
 
-console.log("กำลัง Login Discord...");
+(async () => {
+  try {
 
-client.login(TOKEN)
-.then(() => {
-  console.log("Discord Login Success");
-})
-.catch(err => {
-  console.error("Discord Login Error:", err);
-});
+    console.log("กำลัง Login Discord...");
 
-console.log("หลัง client.login");
+    await client.login(TOKEN);
+
+    console.log("Discord Login Success");
+
+  } catch (err) {
+
+    console.error("Discord Login Error:", err);
+
+  }
+})();
 
 const express = require("express");
 const app = express();
