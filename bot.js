@@ -748,11 +748,29 @@ process.on("uncaughtException", console.error);
 
 console.log("TOKEN =", TOKEN ? "FOUND" : "NOT FOUND");
 
+// DEBUG EVENTS
+client.on("ready", () => {
+  console.log("BOT READY");
+});
+
+client.on("error", console.error);
+
+client.on("shardError", err => {
+  console.error("Shard Error:", err);
+});
+
+client.on("warn", console.warn);
+
+client.on("debug", msg => {
+  console.log("DEBUG:", msg);
+});
+
 (async () => {
   try {
 
     console.log("กำลัง Login Discord...");
-
+    console.log("Node Version =", process.version);
+    console.log("Discord.js Loaded");
     await client.login(TOKEN);
 
     console.log("Discord Login Success");
@@ -763,14 +781,3 @@ console.log("TOKEN =", TOKEN ? "FOUND" : "NOT FOUND");
 
   }
 })();
-
-const express = require("express");
-const app = express();
-
-app.get("/", (req, res) => {
-  res.send("Bot is online");
-});
-
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Web server running");
-});
