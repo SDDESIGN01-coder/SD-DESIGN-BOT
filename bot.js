@@ -160,7 +160,7 @@ async function sendCloseShop(channel) {
 
     แต้มปัจจุบัน : ${currentPoint} แต้ม
 
-    ขอบคุณที่ใช้บริการ SD DESIGN STUDIO 🩵`)
+    ขอบคุณที่ใช้บริการ SD DESIGN STUDIO 🩷`)
     ]
     });
 
