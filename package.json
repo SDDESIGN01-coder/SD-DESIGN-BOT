@@ -4,11 +4,12 @@
   "description": "",
   "main": "bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "start": "node bot.js",
+  "test": "echo \"Error: no test specified\" && exit 1"
+ },
   "engines": {
-  "node": "22.x"
-},
+  "node": "20.x"
+ },
   "keywords": [],
   "author": "",
   "license": "ISC",
