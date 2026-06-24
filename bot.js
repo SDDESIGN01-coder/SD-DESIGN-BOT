@@ -37,7 +37,7 @@ let shopInterval = null;
 
 const queues = new Map();
 // ===================== READY =====================
-client.once("ready", () => {
+client.once(Events.ClientReady, () => {
   console.log(`${client.user.tag} ออนไลน์แล้ว`);
 });
 
@@ -740,7 +740,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 // ===================== LOGIN =====================
-client.login(TOKEN);
+console.log("TOKEN =", TOKEN ? "FOUND" : "NOT FOUND");
+client.login(TOKEN)
+.then(() => console.log("Discord Login Success"))
+.catch(err => console.error("Discord Login Error:", err));
 
 const express = require("express");
 const app = express();
@@ -749,6 +752,8 @@ app.get("/", (req, res) => {
   res.send("Bot is online");
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Web server running");
+const PORT = process.env.PORT || 10000;
+
+app.listen(PORT, () => {
+  console.log(`Web server running on ${PORT}`);
 });
