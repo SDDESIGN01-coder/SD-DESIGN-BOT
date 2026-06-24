@@ -1,5 +1,7 @@
 require("dotenv").config();
+console.log("Start bot.js");
 const db = require("./firebase");
+console.log("Firebase loaded");
 
 const {
   Client,
@@ -741,6 +743,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 // ===================== LOGIN =====================
 console.log("TOKEN =", TOKEN ? "FOUND" : "NOT FOUND");
+console.log("Before login");
 client.login(TOKEN)
 .then(() => console.log("Discord Login Success"))
 .catch(err => console.error("Discord Login Error:", err));
