@@ -1,7 +1,5 @@
 require("dotenv").config();
-console.log("Start bot.js");
 const db = require("./firebase");
-console.log("Firebase loaded");
 
 const {
   Client,
@@ -29,7 +27,7 @@ const client = new Client({
 });
 
 // ===================== CONFIG =====================
-const TOKEN = process.env.TOKEN?.trim();
+const TOKEN = process.env.TOKEN;
 const ROLE_ID = "1445822762890563745";
 
 // ===================== STATE =====================
@@ -39,7 +37,7 @@ let shopInterval = null;
 
 const queues = new Map();
 // ===================== READY =====================
-client.once(Events.ClientReady, () => {
+client.once("ready", () => {
   console.log(`${client.user.tag} ออนไลน์แล้ว`);
 });
 
@@ -742,15 +740,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 // ===================== LOGIN =====================
-console.log("TOKEN =", TOKEN ? "FOUND" : "NOT FOUND");
-console.log("Before login");
-console.log("TOKEN LENGTH =", TOKEN?.length);
-setTimeout(() => {
-  console.log("Still running after 10 sec");
-}, 10000);
-client.login(TOKEN)
-.then(() => console.log("Discord Login Success"))
-.catch(err => console.error("Discord Login Error:", err));
+client.login(TOKEN);
 
 const express = require("express");
 const app = express();
@@ -759,8 +749,6 @@ app.get("/", (req, res) => {
   res.send("Bot is online");
 });
 
-const PORT = process.env.PORT || 10000;
-
-app.listen(PORT, () => {
-  console.log(`Web server running on ${PORT}`);
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Web server running");
 });
