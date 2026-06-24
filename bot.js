@@ -29,7 +29,7 @@ const client = new Client({
 });
 
 // ===================== CONFIG =====================
-const TOKEN = process.env.TOKEN;
+const TOKEN = process.env.TOKEN?.trim();
 const ROLE_ID = "1445822762890563745";
 
 // ===================== STATE =====================
@@ -744,6 +744,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
 // ===================== LOGIN =====================
 console.log("TOKEN =", TOKEN ? "FOUND" : "NOT FOUND");
 console.log("Before login");
+console.log("TOKEN LENGTH =", TOKEN?.length);
+setTimeout(() => {
+  console.log("Still running after 10 sec");
+}, 10000);
 client.login(TOKEN)
 .then(() => console.log("Discord Login Success"))
 .catch(err => console.error("Discord Login Error:", err));
