@@ -740,7 +740,15 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 // ===================== LOGIN =====================
-client.login(TOKEN);
+console.log("TOKEN =", TOKEN ? "FOUND" : "NOT FOUND");
+
+client.login(TOKEN)
+.then(() => {
+  console.log("Discord Login Success");
+})
+.catch(err => {
+  console.error("Discord Login Error:", err);
+});
 
 const express = require("express");
 const app = express();
