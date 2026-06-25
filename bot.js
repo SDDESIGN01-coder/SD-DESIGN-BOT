@@ -1,7 +1,18 @@
-console.log("TOKEN LENGTH =", process.env.TOKEN?.length);
-console.log("PROJECT =", process.env.FIREBASE_PROJECT_ID);
+const express = require("express");
+const app = express();
+
+app.get("/", (req, res) => {
+  res.send("Bot is running");
+});
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Web server started");
+});
 
 require("dotenv").config();
+
+console.log("TOKEN LENGTH =", process.env.TOKEN?.length);
+console.log("PROJECT =", process.env.FIREBASE_PROJECT_ID);
 const db = require("./firebase");
 
 const {
