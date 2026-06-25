@@ -52,7 +52,8 @@ let shopInterval = null;
 const queues = new Map();
 // ===================== READY =====================
 client.once("ready", () => {
-  console.log(`${client.user.tag} ออนไลน์แล้ว`);
+  console.log("✅ BOT ONLINE");
+  console.log(client.user.tag);
 });
 
 // ===================== OPEN SHOP =====================
