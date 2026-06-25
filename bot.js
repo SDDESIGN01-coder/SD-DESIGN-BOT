@@ -813,9 +813,25 @@ client.on("shardResume", () => {
 
 const https = require("https");
 
-https.get("https://discord.com/api/v10/gateway", (res) => {
-  console.log("Discord API Status:", res.statusCode);
+https.get("https://discord.com/api/v10/users/@me", {
+  headers: {
+    Authorization: `Bot ${TOKEN}`
+  }
+}, (res) => {
+  console.log("BOT API STATUS =", res.statusCode);
+
+  let data = "";
+
+  res.on("data", chunk => {
+    data += chunk;
+  });
+
+  res.on("end", () => {
+    console.log("BOT API RESPONSE =", data);
+  });
 });
+
+await client.login(TOKEN);
 
     await client.login(TOKEN);
     console.log("LOGIN SUCCESS");
