@@ -790,6 +790,27 @@ client.on("debug", msg => {
   console.log("LOGIN STILL WAITING AFTER 30 SECONDS");
 }, 30000);
 
+
+client.on("ready", () => {
+  console.log("READY EVENT FIRED");
+});
+
+client.on("shardReady", id => {
+  console.log("SHARD READY", id);
+});
+
+client.on("shardDisconnect", event => {
+  console.log("SHARD DISCONNECT", event.code);
+});
+
+client.on("shardReconnecting", () => {
+  console.log("SHARD RECONNECTING");
+});
+
+client.on("shardResume", () => {
+  console.log("SHARD RESUME");
+});
+
     await client.login(TOKEN);
     console.log("LOGIN SUCCESS");
 
