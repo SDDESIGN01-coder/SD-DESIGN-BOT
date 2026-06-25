@@ -782,7 +782,9 @@ client.on("debug", msg => {
     console.log("กำลัง Login Discord...");
     console.log("Node Version =", process.version);
     console.log("Discord.js Loaded");
+    console.log("START LOGIN");
     await client.login(TOKEN);
+    console.log("LOGIN SUCCESS");
 
     console.log("Discord Login Success");
 
