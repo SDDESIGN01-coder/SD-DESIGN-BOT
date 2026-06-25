@@ -783,6 +783,13 @@ client.on("debug", msg => {
     console.log("Node Version =", process.version);
     console.log("Discord.js Loaded");
     console.log("START LOGIN");
+    console.log("TOKEN CHECK =", TOKEN ? "YES" : "NO");
+    console.log("TOKEN SIZE =", TOKEN?.length);
+
+    setTimeout(() => {
+  console.log("LOGIN STILL WAITING AFTER 30 SECONDS");
+}, 30000);
+
     await client.login(TOKEN);
     console.log("LOGIN SUCCESS");
 
