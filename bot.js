@@ -811,6 +811,12 @@ client.on("shardResume", () => {
   console.log("SHARD RESUME");
 });
 
+const https = require("https");
+
+https.get("https://discord.com/api/v10/gateway", (res) => {
+  console.log("Discord API Status:", res.statusCode);
+});
+
     await client.login(TOKEN);
     console.log("LOGIN SUCCESS");
 
