@@ -1,5 +1,7 @@
 const admin = require("firebase-admin");
 
+console.log("START FIREBASE");
+
 admin.initializeApp({
   credential: admin.credential.cert({
     projectId: process.env.FIREBASE_PROJECT_ID,
@@ -7,5 +9,7 @@ admin.initializeApp({
     privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n")
   })
 });
+
+console.log("FIREBASE READY");
 
 module.exports = admin.firestore();
