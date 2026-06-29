@@ -211,29 +211,29 @@ embeds:[embed]
 
   const embed = new EmbedBuilder()
     .setColor("Gold")
-    .setTitle("🎁 ร้านแลกของรางวัล")
+    .setTitle(" ร้านแลกของรางวัล 🎁")
     .setDescription(`
-เลือกของรางวัลที่ต้องการแลก
+เลือกคูปองที่ต้องการแลก
 
-50 แต้ม = ลด 10%
-100 แต้ม = ลด 20%
-150 แต้ม = ลด 30%
+100 แต้ม = ลด 10.-
+200 แต้ม = ลด 20.-
+300 แต้ม = ลด 30.-
 `);
 
   const row = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId("reward10")
-      .setLabel("🎁 ลด 10%")
+      .setLabel("🎁 ลด 10.-")
       .setStyle(ButtonStyle.Primary),
 
     new ButtonBuilder()
       .setCustomId("reward20")
-      .setLabel("🎁 ลด 20%")
+      .setLabel("🎁 ลด 20.-")
       .setStyle(ButtonStyle.Success),
 
     new ButtonBuilder()
       .setCustomId("reward30")
-      .setLabel("🎁 ลด 30%")
+      .setLabel("🎁 ลด 30.-")
       .setStyle(ButtonStyle.Danger)
   );
 
