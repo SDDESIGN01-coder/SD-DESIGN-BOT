@@ -568,18 +568,18 @@ function disableRedeemButtons() {
   let reward = "";
 
   if (interaction.customId === "reward10") {
-    needPoint = 50;
-    reward = "🎁 ส่วนลด 10%";
+    needPoint = 100;
+    reward = "🎁 ส่วนลด 10.-";
   }
 
   if (interaction.customId === "reward20") {
-    needPoint = 100;
-    reward = "🎁 ส่วนลด 20%";
+    needPoint = 200;
+    reward = "🎁 ส่วนลด 20.-";
   }
 
   if (interaction.customId === "reward30") {
-    needPoint = 150;
-    reward = "🎁 ส่วนลด 30%";
+    needPoint = 300;
+    reward = "🎁 ส่วนลด 30.-";
   }
 
   if (point < needPoint) {
