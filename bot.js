@@ -832,6 +832,8 @@ https.get("https://discord.com/api/v10/users/@me", {
   });
 });
 
+await client.login(TOKEN);
+
     await client.login(TOKEN);
     console.log("LOGIN SUCCESS");
 
